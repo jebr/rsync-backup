@@ -2,10 +2,8 @@
 
 # Python program to backup directory for several days
 
-import argparse
 import datetime
 import json
-import random
 import os
 import subprocess
 import sys
@@ -27,8 +25,6 @@ def resource_path(relative_path):
     # logging.info('Pyinstaller file location {}'.format(base_path))
     return os.path.join(base_path, relative_path)
 
-
-parser = argparse.ArgumentParser(description='Python Rsync backup')
 
 # Constants
 FILTER_FILE = resource_path('rsync_filter.txt')
@@ -75,9 +71,12 @@ def rsync_backup():
                      "--omit-dir-times", "-K", "-L", filter_file, backup_source, backup_temp]
     try:
         subprocess.check_call(rsync_command)
-        write_log("SUCCESS", f"Backup from {backup_source} to {backup_destination}")
+        write_log("SUCCESS", f"Backup from {backup_source} to {backup_temp}")
     except Exception as e:
         write_log(f'ERROR', {e})
+        print('Backup failed')
+        exit()
+
 
 
 def write_log(error_type, message):
@@ -91,18 +90,11 @@ def copy_backup():
     write_log("SUCCES", f"Backup gekopieerd naar {number}")
 
 
+
 def main():
     clear_screen()
     init_config()
     rsync_backup()
-    # parser.add_argument("-d", "--days", help="Create bakup for specific days",
-    #                    metavar="", type=int)
-
-    # args = parser.parse_args()
-    # if args.days:
-    #    init_config()
-    # else:
-    #    parser.print_help()
 
 
 if __name__ == '__main__':
