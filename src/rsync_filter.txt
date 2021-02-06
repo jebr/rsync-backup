@@ -1,0 +1,4 @@
+- /exception/path/1
+- /exception/path/2
+- /exception/path/3
++ *
