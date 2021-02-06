@@ -1,0 +1,5 @@
+{
+  "BACKUP_DAYS": 7,
+  "BACKUP_SOURCE": "/Users/Jeroen/Documents/rsync_test/source_test/",
+  "BACKUP_DESTINATION": "/Users/Jeroen/Documents/rsync_test/destination_test/"
+}

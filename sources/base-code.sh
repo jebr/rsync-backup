@@ -12,6 +12,7 @@ logfile="/home/jeroen/docker/docker-logs"
 # Maak de backup
 # rsync -zrlct --stats --delete --no-o --no-g --no-perms --omit-dir-times -f="merge /home/jeroen/filter.txt" /home/jeroen/mineser/ /home/jeroen/mine-nas/backup/survival/1.15
 rsync -zrlctq --stats --delete --no-o --no-t --no-g --no-perms --omit-dir-times -K -L -f="$filter" "$root" "$destination"
+rsync -zrlctq --stats --delete --no-o --no-t --no-g --no-perms --omit-dir-times -K -L /Users/Jeroen/Documents/rsync_test/source_test/ /Users/Jeroen/Documents/rsync_test/destination_test
 
 if [ "$?" -eq "0" ]
 then
