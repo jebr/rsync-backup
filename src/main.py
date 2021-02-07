@@ -30,6 +30,7 @@ def resource_path(relative_path):
 FILTER_FILE = resource_path('rsync_filter.txt')
 LOG_FILE = resource_path('rsync_backup.log')
 CONFIG_FILE = resource_path('config.json')
+date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def init_config():
@@ -65,36 +66,44 @@ def clear_screen():
 
 def rsync_backup():
     filter_file = f"--exclude-from={FILTER_FILE}"
-    global backup_temp
-    backup_temp = backup_destination + "/temp"
+    backup_dir = backup_destination + f"/{date_time}"
     rsync_command = ["rsync", "-zrlctq", "--stats", "--delete", "--no-o", "--no-t", "--no-g", "--no-perms",
-                     "--omit-dir-times", "-K", "-L", filter_file, backup_source, backup_temp]
+                     "--omit-dir-times", "-K", "-L", filter_file, backup_source, backup_dir]
     try:
         subprocess.check_call(rsync_command)
-        write_log("SUCCESS", f"Backup from {backup_source} to {backup_temp}")
+        write_log("SUCCESS", f"Backup from {backup_source} to {backup_dir}")
     except Exception as e:
         write_log(f'ERROR', {e})
         print('Backup failed')
         exit()
 
 
-
 def write_log(error_type, message):
-    date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open(LOG_FILE, 'a') as logfile:
         logfile.write(f'{date_time}:{error_type}:{message}\n')
 
 
-def copy_backup():
-    number = 0
-    write_log("SUCCES", f"Backup gekopieerd naar {number}")
+def copy_backup() -> str:
+    number = -1
+    os.chdir(backup_destination)
 
+    for base, dirs, files in os.walk(os.getcwd()):
+        #print(f"searching in {base}")
+        for directorys in dirs:
+            number += 1
+
+    if number <= backup_days:
+        oldest_folder = min(os.getcwd(), key=os.path.getctime)
+        os.remove(oldest_folder)
+
+    return ""
 
 
 def main():
     clear_screen()
     init_config()
     rsync_backup()
+    copy_backup()
 
 
 if __name__ == '__main__':
